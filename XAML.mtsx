@@ -53,7 +53,7 @@
                     {include: "colorMatcher"}
                     // XML实体引用
                     {match: /&([a-zA-Z_][\w:\.\-]*|#\d+|#x[0-9a-fA-F]+);/, 0: "strEscape"}
-                    // 单独的&视为错误
+                    // 单独的 & 视为错误
                     {match: /&/, 0: "error"}
                 ]
             }
@@ -140,7 +140,7 @@
 
         // 实体引用
         {match: /&([a-zA-Z_][\w:\.\-]*|#\d+|#x[0-9a-fA-F]+);/, 0: "strEscape"}
-        // 单独的&视为错误
+        // 单独的 & 视为错误
         {match: /&/, 0: "error"}
 
         // 颜色常亮
