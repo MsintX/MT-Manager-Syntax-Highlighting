@@ -1,0 +1,152 @@
+// XAML Syntax Highlighting
+// Author: MsintX
+// AI Collaborator: ChatGPT (OpenAI)
+{
+    // 支持的语言名称及文件扩展名
+    name: ["XAML", ".xaml"]
+
+    // 自定义样式
+    styles: [
+        "tagNameBracket", #000000, #E8BF6A
+    ]
+
+    // 注释语法定义
+    comment: {startsWith: "<!--", endsWith: "-->"}
+
+    // 括号配对
+    bracketPairs: ["<>", "{}", "[]", "()"]
+
+    defines: [
+        // 颜色值匹配器
+        "colorMatcher": {
+            match: /(?<![;&])#([a-fA-F0-9]{3,8})\b/, 0: "parseColor(auto,1,HEX)"
+        }
+
+        // 标签名
+        "tagName": /[a-zA-Z_][\w:\.\-]*/
+
+        // 属性内容规则集合
+        "attrContent": [
+            // xmlns声明与命名空间
+            {
+                match: /(xmlns:)([a-zA-Z_][\w\.\-]*)/
+                1: "attrName"
+                2: "namespace"
+            }
+            // 带命名空间前缀的属性
+            {
+                match: /([a-zA-Z_][\w\.\-]*)(:[a-zA-Z_][\w\.\-]*)/
+                1: "namespace"
+                2: "attrName"
+            }
+            // 普通属性名
+            {match: /[a-zA-Z_][\w\.\-]*/, 0: "attrName"}
+            // 属性赋值符号
+            {match: /\s*=\s*/, 0: "string"}
+
+            // XAML属性值
+            {
+                style: "propVal"
+                start: {match: /"/}
+                end: {match: /"|$/}
+                contains: [
+                    {include: "colorMatcher"}
+                    // XML实体引用
+                    {match: /&([a-zA-Z_][\w:\.\-]*|#\d+|#x[0-9a-fA-F]+);/, 0: "strEscape"}
+                    // 单独的&视为错误
+                    {match: /&/, 0: "error"}
+                ]
+            }
+            // XAML属性值
+            {
+                style: "propVal"
+                start: {match: /'/}
+                end: {match: /'|$/}
+                contains: [
+                    {include: "colorMatcher"}
+                    {match: /&([a-zA-Z_][\w:\.\-]*|#\d+|#x[0-9a-fA-F]+);/, 0: "strEscape"}
+                    {match: /&/, 0: "error"}
+                ]
+            }
+        ]
+    ]
+
+    contains: [
+        // XML声明
+        {
+            start: {match: /<\?(xml)/, 0: "tagNameBracket", 1: "tagName"}
+            end: {match: /\?>/, 0: "tagNameBracket"}
+            style: "meta"
+            contains: [{include: "attrContent"}]
+        }
+
+        // XAML中常见的x:Class、x:Name等指令由属性规则处理
+        // 通用处理指令
+        {
+            start: {match: /<\?/, 0: "meta"}
+            end: {match: /\?>/, 0: "meta"}
+            style: "meta"
+        }
+
+        // DOCTYPE声明
+        {
+            start: {match: /<!DOCTYPE/, 0: "meta"}
+            end: {match: />/, 0: "meta"}
+            style: "meta"
+        }
+
+        // CDATA区块
+        {
+            start: {match: /<!\[CDATA\[/, 0: "meta"}
+            end: {match: /\]\]>/, 0: "meta"}
+            style: "string"
+        }
+
+        // XML注释
+        {
+            start: {match: /<!--/, 0: "comment"}
+            end: {match: /-->/, 0: "comment"}
+            style: "comment"
+        }
+
+        // 开始标签/自闭合标签
+        {
+            start: {match: /<(/ + include("tagName") + /)/, 0: "tagNameBracket", 1: "tagName"}
+            end: {match: /\/?>|$/, 0: "tagNameBracket"}
+            contains: [{include: "attrContent"}]
+        }
+
+        // 结束标签
+        {
+            match: /<\/(/ + include("tagName") + /)\s*>/
+            0: "tagNameBracket"
+            1: "tagName"
+        }
+
+        // XAML标记扩展
+        {
+            start: {match: /\{(Binding|StaticResource|DynamicResource|x:Type|x:Static|TemplateBinding|RelativeSource|Static|ThemeResource)\b/, 0: "keyword"}
+            end: {match: /\}/, 0: "keyword"}
+            style: "meta"
+            contains: [
+                // 标记扩展的常见属性名
+                {match: /\b(Path|Mode|Source|ElementName|RelativeSource|Converter|ConverterParameter|FallbackValue|TargetNullValue|UpdateSourceTrigger|AncestorType|AncestorLevel)\b/, 0: "attrName"}
+                // 双引号字符串值
+                {match: /"(?:[^"]|"")*"/, 0: "propVal"}
+                // 单引号字符串值
+                {match: /'(?:[^']|'')*'/, 0: "propVal"}
+            ]
+        }
+
+        // 实体引用
+        {match: /&([a-zA-Z_][\w:\.\-]*|#\d+|#x[0-9a-fA-F]+);/, 0: "strEscape"}
+        // 单独的&视为错误
+        {match: /&/, 0: "error"}
+
+        // 颜色常亮
+        {include: "colorMatcher"}
+    ]
+
+    // 使用内置的XML格式化器进行代码格式化
+    codeFormatter: #BUILT_IN_XML_FORMATTER#
+}
