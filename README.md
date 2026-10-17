@@ -31,4 +31,4 @@ XAML| ""XAML.mtsx"" (./XAML.mtsx)| ".xaml"
 
 ## License
 
-本项目采用 [MIT LICENSE](./LICENSE) 开源  
+本项目采用 [MIT LICENSE](./LICENSE) 开源
