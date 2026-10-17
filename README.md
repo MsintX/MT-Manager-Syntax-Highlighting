@@ -3,12 +3,6 @@
 为 "MT 管理器（MT Manager）" (https://mt2.cn/) 提供额外的语法高亮配置  
   
 本项目目前包含 F# 与 XAML 的语法高亮规则，旨在让你在 MT 管理器中查看和编辑相关代码时，获得更清晰的语法着色效果  
-
-## 支持的语言
-
-语言| 配置文件| 支持的扩展名  
-F#| ""FSharp.mtsx"" (./FSharp.mtsx)|   ".fs"、".fsi"、".fsx"、".fsscript"  
-XAML| ""XAML.mtsx"" (./XAML.mtsx)| ".xaml"  
   
 ## 使用方法
 
